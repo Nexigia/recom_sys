@@ -61,4 +61,5 @@ Loss 함수는 이진 분류 특성상 **`BinaryCrossentropy`** 로 고정
 
 - `lr = 0.01` 로 학습 시 **5 epoch 부근에서 검증 손실이 최저**로 나타났음.  
 - 다음 시각화를 통해 과대적합 징후를 포착하게 됨
-<img width="790" height="490" alt="시각화" src="https://github.com/user-attachments/assets/a671e87d-9f08-4cfb-b852-b19c0dbf006a" />
+<img width="790" height="490" alt="시각화" src="https://github.com/user-attachments/assets/65f800f3-950f-478b-8ba5-cf2132fa53eb" />
+
