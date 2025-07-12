@@ -25,7 +25,7 @@ def load_data():
     model_path = f"{project_path}/{model_dir_nm}"
     field_dims = np.load(f'{data_path}/field_dims.npy')
     dropout= 0.4
-    embed_dim= 16
+    embed_dim= 32
     
     ratings_df = pd.read_csv(f'{data_path}/{movielens_dir_nm}/ratings_prepro.csv')
     movies_df = pd.read_csv(f'{data_path}/{movielens_dir_nm}/movies_prepro.csv')
