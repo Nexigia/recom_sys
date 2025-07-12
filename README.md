@@ -1,65 +1,52 @@
 # recom_sys
-# AutoInt+ – Hyper-Parameter Tuning Log
+## 옵티마이저 변동 시
 
-추천 시스템 과제에서 **AutoInt+** 모델을 대상으로 수행한 실험 결과를 정리  
-평가 지표는 **nDCG@10** 과 **Hit Rate@10** 을 사용했습니다.
+| 실험 | Optimizer     | Loss               | Epochs | Learning Rate | Dropout | Batch Size | Embed Dim | NDCG        | HitRate     |
+| -- | ------------- | ------------------ | ------ | ------------- | ------- | ---------- | --------- | ----------- | ----------- |
+| 1차 | Adam          | BinaryCrossentropy | 5      | 0.0001        | 0.4     | 2048       | 16        | 0.66172     | 0.63026     |
+| 2차 | Adam +AMSGrad | BinaryCrossentropy | 5      | 0.0001        | 0.4     | 2048       | 16        | 0.66164     | 0.63027     |
+| 3차 | AdamW         | BinaryCrossentropy | 5      | 0.0001        | 0.4     | 2048       | 16        | 0.66159     | 0.62996     |
+| 3차 | Adamax        | BinaryCrossentropy | 5      | 0.0001        | 0.4     | 2048       | 16        | 0.64647     | 0.62153     |
+| 5차 | Nadam         | BinaryCrossentropy | 5      | 0.0001        | 0.4     | 2048       | 16        | **0.66218** | **0.63056** |
+| 6차 | SGD           | BinaryCrossentropy | 5      | 0.0001        | 0.4     | 2048       | 16        | 0.55241     | 0.56786     |
+| 7차 | RMSprop       | BinaryCrossentropy | 5      | 0.0001        | 0.4     | 2048       | 16        | 0.54495     | 0.56434     |
+| 8차 | Adadelta      | BinaryCrossentropy | 5      | 0.0001        | 0.4     | 2048       | 16        | 0.56492     | 0.5742      |
+| 9차 | Adafactor     | BinaryCrossentropy | 5      | 0.0001        | 0.4     | 2048       | 16        | 0.58743     | 0.58552     |
+|    |               |                    |        |               |         |            |           |             |             |
 
----
+* 같은 조건에서 가장 높은 NDCG, HitRate를 기록한 옵티마이저는 Nadam이므로 이 모델의 훈련에 가장 적합한 옵티마이저를 Nadam로 가정하고 하이퍼파라미터 조정
+* 어차피 이 모델은 추천이 맞았는지, 틀렸는지 2가지 경우만 취급하므로 Loss 함수는 `BinaryCrossentropy` 로 고정
 
-## 1. Optimizer 탐색
+## Epoch만 단독 변환
 
-> 공통 설정  
-> `epochs=5 · learning_rate=0.0001 · dropout=0.4 · batch_size=2048 · embed_dim=16`
+| 실험  | Optimizer | Loss               | Epochs | Learning Rate | Dropout | Batch Size | Embed Dim | NDCG    | HitRate |
+| --- | --------- | ------------------ | ------ | ------------- | ------- | ---------- | --------- | ------- | ------- |
+| 10차 | Nadam     | BinaryCrossentropy | 10     | 0.0001        | 0.4     | 2048       | 16        | 0.66151 | 0.63036 |
+| 11차 | Nadam     | BinaryCrossentropy | 20     | 0.0001        | 0.4     | 2048       | 16        | 0.66167 | 0.63023 |
 
-| 실험 | Optimizer | nDCG | Hit Rate |
-| :--: | :------- | :---: | :------: |
-| 1 차 | Adam | 0.66172 | 0.63026 |
-| 2 차 | Adam&nbsp;+&nbsp;AMSGrad | 0.66164 | 0.63027 |
-| 3 차 | AdamW | 0.66159 | 0.62996 |
-| 4 차 | Adamax | 0.64647 | 0.62153 |
-| **5 차** | **Nadam** | **0.66218** | **0.63056** |
-| 6 차 | SGD | 0.55241 | 0.56786 |
-| 7 차 | RMSprop | 0.54495 | 0.56434 |
-| 8 차 | Adadelta | 0.56492 | 0.57420 |
-| 9 차 | Adafactor | 0.58743 | 0.58552 |
+* 성능에 큰 변화 없음
 
-**결론 → Nadam**  
-- 가장 높은 nDCG·Hit Rate를 기록해 이후 실험의 기본 옵티마이저로 채택
-- Loss 함수는 이진 분류 특성상 **`BinaryCrossentropy`** 로 고정
+  * `learning_rate` 가 너무 작아 수를 늘려도 기울기 하강 정도가 너무 작은 것으로 추측
 
----
+    * → 다시 5로 회귀
 
-## 2. Epoch 수 변화
+## learning\_rate만 단독 변환
 
-| 실험 | Epochs | nDCG | Hit Rate |
-| :--: | :---: | :---: | :------: |
-| 10 차 | 10 | 0.66151 | 0.63036 |
-| 11 차 | 20 | 0.66167 | 0.63023 |
+| 실험  | Optimizer | Loss               | Epochs | Learning Rate | Dropout | Batch Size | Embed Dim | nDCG        | Hit Rate    |
+| --- | --------- | ------------------ | ------ | ------------- | ------- | ---------- | --------- | ----------- | ----------- |
+| 12차 | Nadam     | BinaryCrossentropy | 5      | 0.001         | 0.4     | 2 048      | 16        | **0.66255** | **0.63061** |
+| 13차 | Nadam     | BinaryCrossentropy | 5      | 0.01          | 0.4     | 2 048      | 16        | **0.67102** | **0.63600** |
+| 14차 | Nadam     | BinaryCrossentropy | 5      | 0.1           | 0.4     | 2 048      | 16        | **0.55717** | **0.57051** |
 
-> **Observation** 러닝레이트가 0.0001 로 너무 작아 epoch 수 증가가 성능에 큰 영향을 주지 못함.
+* 학습률(learning rate)이 0.01일 때(13차) 두 지표 모두 가장 높음.
+* 학습률이 너무 크면(0.1) 성능 급락.
 
----
+## leaning\_rate = 0.01 시
 
-## 3. Learning Rate 스윕 (Nadam 사용)
+| 실험  | Optimizer | Loss               | Epochs | Learning Rate | Dropout | Batch Size | Embed Dim | nDCG        | Hit Rate    |
+| --- | --------- | ------------------ | ------ | ------------- | ------- | ---------- | --------- | ----------- | ----------- |
+| 15차 | Nadam     | BinaryCrossentropy | 10     | 0.01          | 0.4     | 2 048      | 16        | **0.67087** | **0.63054** |
 
-| 실험 | Learning Rate | nDCG | Hit Rate |
-| :--: | :-----------: | :---: | :------: |
-| 12 차 | 0.001 | 0.66255 | 0.63061 |
-| **13 차** | **0.01** | **0.67102** | **0.63600** |
-| 14 차 | 0.1 | 0.55717 | 0.57051 |
+* 본래는 `leaning_rate = 0.01` 시의 epoch 변화 추이를 보려고 하였으나 시각화 결과가 아래와 같이 나옴에 따라 계획 수정
 
-- **0.01** 에서 두 지표 모두 최고점을 기록.  
-- 0.1 이상은 발산(성능 급락) → 과대 학습률.
-
----
-
-## 4. 추가 Epoch 실험 (lr = 0.01)
-
-| 실험 | Epochs | nDCG | Hit Rate |
-| :--: | :---: | :---: | :------: |
-| 15 차 | 10 | 0.67087 | 0.63054 |
-
-- `lr = 0.01` 로 학습 시 **5 epoch 부근에서 검증 손실이 최저**로 나타났음.  
-- 다음 시각화를 통해 과대적합 징후를 포착하게 됨
-<img width="790" height="490" alt="시각화" src="https://github.com/user-attachments/assets/65f800f3-950f-478b-8ba5-cf2132fa53eb" />
 
