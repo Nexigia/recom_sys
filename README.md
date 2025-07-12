@@ -24,8 +24,8 @@
 | 9 차 | Adafactor | 0.58743 | 0.58552 |
 
 **결론 → Nadam**  
-가장 높은 nDCG·Hit Rate를 기록해 이후 실험의 기본 옵티마이저로 채택
-Loss 함수는 이진 분류 특성상 **`BinaryCrossentropy`** 로 고정
+- 가장 높은 nDCG·Hit Rate를 기록해 이후 실험의 기본 옵티마이저로 채택
+- Loss 함수는 이진 분류 특성상 **`BinaryCrossentropy`** 로 고정
 
 ---
 
