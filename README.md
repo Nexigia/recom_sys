@@ -52,3 +52,20 @@
 
 <img width="790" height="490" alt="시각화" src="https://github.com/user-attachments/assets/50c22b8c-8104-4011-ae32-97ca3f1beae2" />
 
+## EarlyStopping 적용
+
+| 실험 | Optimizer | Loss | Epochs (Early-Stopping) | Learning Rate | Dropout | Batch Size | Embed Dim | nDCG | Hit Rate |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 16차 | Nadam | BinaryCrossentropy | 10 (정지 시점 6) | 0.01 | 0.4 | 2 048 | 16 | **0.67101** | **0.63615** |
+- EarlyStopping을 이용해 향후 과대적합 추가 발생 가능성 억제
+
+## l2_reg_embedding 조정 (1e-5 → 1e-4) 및 Embed Dim 조정
+
+| 실험 | Optimizer | Loss | Epochs | Learning Rate | Dropout | Batch Size | Embed Dim | nDCG | Hit Rate |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 17차 | Nadam | BinaryCrossentropy | 10(정지 시점 6) | 0.01 | 0.4 | 2 048 | 32 | **0.67089** | **0.63522** |
+
+## 결론
+
+- 과대적합을 방지하면서 성능을 끌어올릴 수 있는 방법은 하이퍼파라미터 튜닝만으로는 한계가 있음
+- 다음에 실험을 할 경우 더 고차원적인 모델 구성에 대한 학습을 한 뒤 다시 진행을 해야 할 것 같음
